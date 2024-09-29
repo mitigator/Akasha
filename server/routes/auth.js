@@ -5,7 +5,6 @@ const User = require('../models/User');
 
 const router = express.Router();
 
-// Registration route
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -37,9 +36,10 @@ router.post('/register', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(201).json({ message: 'User registered successfully', token });
+        return res.status(201).json({ message: 'User registered successfully', token });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error during registration:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

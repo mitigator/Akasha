@@ -4,7 +4,6 @@ const Cart = require('../models/Cart');
 
 const router = express.Router();
 
-// POST request to create an order
 router.post('/:userId', async (req, res) => {
     const { userId } = req.params;
 
@@ -27,7 +26,6 @@ router.post('/:userId', async (req, res) => {
 
         await order.save();
 
-        // Optionally, you can clear the cart after the order is created
         await Cart.deleteOne({ userId });
 
         res.status(201).json({ message: 'Order created', order });
