@@ -1,21 +1,19 @@
-// Cart.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 const Cart = () => {
-    const [cart, setCart] = useState(null);
+    const [cart, setCart] = useState({ items: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const userId = '66f98dedc86b3d3d71d18ad4'; // Hardcoded userId
+    const userId = '66fa197050c1c65c5e6da1e4'; // Hardcoded userId for testing
 
     useEffect(() => {
         const fetchCart = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`);
-                console.log('Cart response:', response.data); // Log the response
-                setCart(response.data); // Adjust based on backend response structure
+                setCart(response.data);
             } catch (err) {
-                console.error('Error fetching cart data:', err);
                 setError('Error fetching cart data.');
             } finally {
                 setLoading(false);
@@ -26,21 +24,21 @@ const Cart = () => {
     }, []);
 
     const calculateTotalPrice = () => {
-        if (!cart) return 0;
-        return cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+        return cart.items.reduce((total, item) => {
+            const itemPrice = item.price || 0;
+            const itemQuantity = item.quantity || 0;
+            return total + itemPrice * itemQuantity;
+        }, 0).toFixed(2);
     };
 
     const handleDeleteItem = async (itemId) => {
-        console.log('Attempting to delete item:', itemId);
         try {
             await axios.delete(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}/item/${itemId}`);
-            setCart((prevCart) => ({
+            setCart(prevCart => ({
                 ...prevCart,
-                items: prevCart.items.filter((item) => item.item._id !== itemId),
+                items: prevCart.items.filter(item => item.item._id !== itemId),
             }));
-            console.log('Item deleted successfully');
         } catch (err) {
-            console.error('Error deleting item from cart:', err);
             setError('Error deleting item. Please try again.');
         }
     };
@@ -48,9 +46,8 @@ const Cart = () => {
     const handleClearCart = async () => {
         try {
             await axios.delete(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}/clear`);
-            setCart({ items: [] }); // Clear the cart state
+            setCart({ items: [] });
         } catch (err) {
-            console.error('Error clearing cart:', err);
             setError('Error clearing cart. Please try again.');
         }
     };
@@ -65,10 +62,8 @@ const Cart = () => {
                 })
             );
             alert('Proceeding to payment');
-            // Optionally clear the cart after checkout
             await handleClearCart();
         } catch (err) {
-            console.error('Error during checkout:', err);
             alert('Error during checkout. Please try again.');
         }
     };
@@ -77,9 +72,12 @@ const Cart = () => {
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
-        <div className="container mx-auto mt-10 p-5">
+        <div>
+            <Navbar/>
+            <div className="container mx-auto mt-10 p-5">
+            
             <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-            {cart?.items?.length === 0 ? (
+            {cart.items.length === 0 ? (
                 <div className="text-center">Your cart is empty.</div>
             ) : (
                 <div className="bg-white shadow-md rounded-lg p-5">
@@ -104,7 +102,7 @@ const Cart = () => {
                     </ul>
                     <div className="flex justify-between mt-4 font-bold">
                         <span>Total Price:</span>
-                        <span>₹{calculateTotalPrice().toFixed(2)}</span>
+                        <span>₹{calculateTotalPrice()}</span>
                     </div>
                     <button
                         onClick={handleClearCart}
@@ -120,6 +118,7 @@ const Cart = () => {
                     </button>
                 </div>
             )}
+        </div>
         </div>
     );
 };

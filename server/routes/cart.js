@@ -9,8 +9,8 @@ router.post('/:userId', async (req, res) => {
     const { itemId, quantity } = req.body;
     const { userId } = req.params;
 
-    if (!itemId || !quantity) {
-        return res.status(400).json({ message: 'Please provide itemId and quantity' });
+    if (!itemId || !quantity || quantity <= 0) {
+        return res.status(400).json({ message: 'Please provide a valid itemId and quantity' });
     }
 
     try {
@@ -22,13 +22,14 @@ router.post('/:userId', async (req, res) => {
             cart = new Cart({ userId, items: [] });
         }
 
-        const existingItemIndex = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId);
-        const itemPrice = item.price;
+        const existingItemIndex = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId.toString());
 
         if (existingItemIndex > -1) {
+            // Update quantity of the existing item
             cart.items[existingItemIndex].quantity += quantity;
         } else {
-            cart.items.push({ item: itemId, quantity, price: itemPrice });
+            // Add new item to cart
+            cart.items.push({ item: itemId, quantity, price: item.price });
         }
 
         await cart.save();

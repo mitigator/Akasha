@@ -10,7 +10,7 @@ const Inventory = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [cart, setCart] = useState({});
     const [message, setMessage] = useState('');
-    const userId = '66f98dedc86b3d3d71d18ad4'; // Hardcoded userId
+    const userId = '66fa197050c1c65c5e6da1e4'; // Hardcoded userId
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -28,28 +28,31 @@ const Inventory = () => {
     }, []);
 
     const handleAddToCart = async (item) => {
-        // Simply add to the cart without increasing the quantity if already present
+        // Check if the item is already in the cart
         setCart((prevCart) => {
             const newCart = { ...prevCart };
-            if (!newCart[item._id]) {
-                newCart[item._id] = { ...item, quantity: 1 }; // Only add item if not already in cart
 
-                // Send updated item to backend
-                axios.post(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`, {
-                    itemId: item._id,
-                    quantity: newCart[item._id].quantity
-                })
-                .then(response => {
-                    console.log('Cart updated successfully:', response.data);
-                    setMessage(`${item.name} has been added to your cart.`);
-                })
-                .catch(err => {
-                    console.error('Error adding item to cart:', err);
-                    setMessage('Error adding item to cart.');
-                });
+            if (newCart[item._id]) {
+                // Increment quantity if item already exists in cart
+                newCart[item._id].quantity += 1;
             } else {
-                setMessage(`${item.name} is already in your cart.`);
+                // Add new item to the cart with quantity 1
+                newCart[item._id] = { ...item, quantity: 1 };
             }
+
+            // Send updated item to backend
+            axios.post(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`, {
+                itemId: item._id,
+                quantity: newCart[item._id].quantity
+            })
+            .then(response => {
+                console.log('Cart updated successfully:', response.data);
+                setMessage(`${item.name} has been added to your cart.`);
+            })
+            .catch(err => {
+                console.error('Error adding item to cart:', err);
+                setMessage('Error adding item to cart.');
+            });
 
             return newCart;
         });
@@ -60,26 +63,22 @@ const Inventory = () => {
         }, 3000);
     };
 
-    const handleIncrement = (item) => {
+    const handleDecreaseQuantity = (item) => {
         setCart((prevCart) => {
             const newCart = { ...prevCart };
-            if (newCart[item._id]) {
-                newCart[item._id].quantity += 1;
-            } else {
-                newCart[item._id] = { ...item, quantity: 1 };
-            }
-            return newCart;
-        });
-    };
-
-    const handleDecrement = (item) => {
-        setCart((prevCart) => {
-            const newCart = { ...prevCart };
-            if (newCart[item._id]?.quantity > 1) {
+            
+            if (newCart[item._id] && newCart[item._id].quantity > 1) {
                 newCart[item._id].quantity -= 1;
             } else {
                 delete newCart[item._id];
             }
+
+            // Update the backend with new cart
+            axios.post(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`, {
+                itemId: item._id,
+                quantity: newCart[item._id]?.quantity || 0
+            });
+
             return newCart;
         });
     };
@@ -136,23 +135,17 @@ const Inventory = () => {
                                             <p className="text-gray-500 text-sm">Stock: {item.stock}</p>
                                         </div>
                                         <div className="flex justify-between items-center mt-4">
-                                            <button
-                                                onClick={() => handleAddToCart(item)}
-                                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                                            >
-                                                Add to Cart
-                                            </button>
                                             <div className="flex items-center">
                                                 <button
-                                                    onClick={() => handleDecrement(item)}
-                                                    className="px-3 py-1 bg-gray-300 hover:bg-gray-400 rounded-l"
+                                                    onClick={() => handleDecreaseQuantity(item)}
+                                                    className="bg-red-500 text-white px-2 py-1 rounded-l-lg hover:bg-red-600 transition-colors"
                                                 >
                                                     -
                                                 </button>
                                                 <span className="px-4">{cart[item._id]?.quantity || 0}</span>
                                                 <button
-                                                    onClick={() => handleIncrement(item)}
-                                                    className="px-3 py-1 bg-gray-300 hover:bg-gray-400 rounded-r"
+                                                    onClick={() => handleAddToCart(item)}
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded-r-lg hover:bg-blue-600 transition-colors"
                                                 >
                                                     +
                                                 </button>
