@@ -74,51 +74,50 @@ const Cart = () => {
     return (
         <div>
             <Navbar/>
-            <div className="container mx-auto mt-10 p-5">
-            
-            <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-            {cart.items.length === 0 ? (
-                <div className="text-center">Your cart is empty.</div>
-            ) : (
-                <div className="bg-white shadow-md rounded-lg p-5">
-                    <ul>
-                        {cart.items.map((item) => (
-                            <li key={item.item._id} className="flex justify-between border-b py-2">
-                                <div>
-                                    <h2 className="font-semibold">{item.item.name}</h2>
-                                    <p>Quantity: {item.quantity}</p>
-                                </div>
-                                <div>
-                                    <p className="font-semibold">₹{item.price.toFixed(2)}</p>
-                                    <button
-                                        onClick={() => handleDeleteItem(item.item._id)}
-                                        className="text-red-500 hover:text-red-700 ml-4"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="flex justify-between mt-4 font-bold">
-                        <span>Total Price:</span>
-                        <span>₹{calculateTotalPrice()}</span>
+            <div className="container mx-auto mt-10 p-5 sm:p-3">
+                <h1 className="text-2xl sm:text-xl font-bold mb-4">Your Cart</h1>
+                {cart.items.length === 0 ? (
+                    <div className="text-center">Your cart is empty.</div>
+                ) : (
+                    <div className="bg-white shadow-md rounded-lg p-5">
+                        <ul>
+                            {cart.items.map((item) => (
+                                <li key={item.item._id} className="flex flex-col sm:flex-row justify-between border-b py-2">
+                                    <div className="mb-2 sm:mb-0">
+                                        <h2 className="font-semibold text-lg sm:text-base">{item.item.name}</h2>
+                                        <p>Quantity: {item.quantity}</p>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <p className="font-semibold text-lg sm:text-base">₹{item.price.toFixed(2)}</p>
+                                        <button
+                                            onClick={() => handleDeleteItem(item.item._id)}
+                                            className="text-red-500 hover:text-red-700 ml-4"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="flex justify-between mt-4 font-bold">
+                            <span>Total Price:</span>
+                            <span>₹{calculateTotalPrice()}</span>
+                        </div>
+                        <button
+                            onClick={handleClearCart}
+                            className="mt-2 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition"
+                        >
+                            Clear Cart
+                        </button>
+                        <button
+                            onClick={handleCheckout}
+                            className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+                        >
+                            Proceed to Checkout
+                        </button>
                     </div>
-                    <button
-                        onClick={handleClearCart}
-                        className="mt-2 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition"
-                    >
-                        Clear Cart
-                    </button>
-                    <button
-                        onClick={handleCheckout}
-                        className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-                    >
-                        Proceed to Checkout
-                    </button>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
         </div>
     );
 };
