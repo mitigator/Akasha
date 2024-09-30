@@ -11,7 +11,7 @@ const Cart = () => {
     useEffect(() => {
         const fetchCart = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/cart/${userId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`);
                 console.log('Cart response:', response.data); // Log the response
                 setCart(response.data); // Adjust based on backend response structure
             } catch (err) {
@@ -33,7 +33,7 @@ const Cart = () => {
     const handleDeleteItem = async (itemId) => {
         console.log('Attempting to delete item:', itemId);
         try {
-            await axios.delete(`http://localhost:5000/api/cart/${userId}/item/${itemId}`);
+            await axios.delete(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}/item/${itemId}`);
             setCart((prevCart) => ({
                 ...prevCart,
                 items: prevCart.items.filter((item) => item.item._id !== itemId),
@@ -47,7 +47,7 @@ const Cart = () => {
 
     const handleClearCart = async () => {
         try {
-            await axios.delete(`http://localhost:5000/api/cart/${userId}/clear`);
+            await axios.delete(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}/clear`);
             setCart({ items: [] }); // Clear the cart state
         } catch (err) {
             console.error('Error clearing cart:', err);
@@ -59,7 +59,7 @@ const Cart = () => {
         try {
             await Promise.all(
                 cart.items.map(async (item) => {
-                    await axios.put(`http://localhost:5000/api/inventory/${item.item._id}/subtract`, {
+                    await axios.put(`${import.meta.env.VITE_BACKEND}/api/inventory/${item.item._id}/subtract`, {
                         quantity: item.quantity,
                     });
                 })

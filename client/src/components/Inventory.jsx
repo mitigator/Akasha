@@ -15,7 +15,7 @@ const Inventory = () => {
     useEffect(() => {
         const fetchItems = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/inventory');
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND}/api/inventory`);
                 setItems(response.data);
                 setLoading(false);
             } catch (err) {
@@ -35,7 +35,7 @@ const Inventory = () => {
                 newCart[item._id] = { ...item, quantity: 1 }; // Only add item if not already in cart
 
                 // Send updated item to backend
-                axios.post(`http://localhost:5000/api/cart/${userId}`, {
+                axios.post(`${import.meta.env.VITE_BACKEND}/api/cart/${userId}`, {
                     itemId: item._id,
                     quantity: newCart[item._id].quantity
                 })

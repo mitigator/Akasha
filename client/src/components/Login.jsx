@@ -15,7 +15,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND}/api/auth/login`, formData);
             setMessage(response.data.message);
             setError('');
             navigate('/');
