@@ -25,7 +25,7 @@ const Hero = () => {
   return (
     <div className="mx-auto flex flex-col lg:flex-row py-24 items-center justify-center overflow-x-hidden bg-[#C9A998] h-screen">
       <img 
-        className="lg:w-2/6 md:w-3/6 w-5/6 h-auto mb-10 object-cover object-center rounded-2xl"
+        className="lg:w-2/6 md:w-3/6 w-5/6 h-auto mb-10 object-cover object-center rounded-xl mt-40 md:mt-0"
         alt="hero" 
         src={currentImage} 
       />
