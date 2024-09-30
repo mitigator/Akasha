@@ -1,31 +1,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const cartRoutes = require('./routes/cart');
-const orderRoutes = require('./routes/order');
-const cors = require('cors');
+const inventoryRoutes = require('./routes/inventory');
+const authRoutes = require('./routes/auth'); // Add your authentication routes
+const cartRoutes = require('./routes/cart'); // Add your cart routes
+const orderRoutes = require('./routes/order'); // Add your order routes
+require('dotenv').config(); // Load environment variables
+const cors = require('cors'); // Import CORS
 
+// Initialize Express
 const app = express();
+app.use(express.json());
+app.use(cors()); // Use CORS
 
-app.use(express.json()); 
-app.use(cors()); 
+// MongoDB Atlas connection
+mongoose.connect("mongodb+srv://india123:india123@akasha.n99fc.mongodb.net/?retryWrites=true&w=majority&appName=akasha", { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true 
+}).then(() => console.log('Connected to MongoDB'))
+.catch(err => console.log(err));
 
-const mongoURI = "mongodb://localhost:27017/akasha";
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+// Routes
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/order', orderRoutes);
 
-app.use('/api/auth', authRoutes); 
-app.use('/api/cart', cartRoutes); 
-app.use('/api/order', orderRoutes); 
-
-app.use((err, req, res, next) => {
-    console.error(err.stack); 
-    res.status(500).json({ message: 'Something went wrong!' }); 
-});
-
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -2,11 +2,16 @@ const express = require('express');
 const Cart = require('../models/Cart');
 const InventoryItem = require('../models/InventoryItem');
 
-const router = express.Router(); 
+const router = express.Router();
 
+// POST request to add item to cart
 router.post('/:userId', async (req, res) => {
     const { itemId, quantity } = req.body;
     const { userId } = req.params;
+
+    if (!itemId || !quantity) {
+        return res.status(400).json({ message: 'Please provide itemId and quantity' });
+    }
 
     try {
         const item = await InventoryItem.findById(itemId);
@@ -18,13 +23,11 @@ router.post('/:userId', async (req, res) => {
         }
 
         const existingItemIndex = cart.items.findIndex(cartItem => cartItem.item.toString() === itemId);
-        const itemPrice = item.price; 
+        const itemPrice = item.price;
 
         if (existingItemIndex > -1) {
-            // Update quantity and price if item exists in the cart
             cart.items[existingItemIndex].quantity += quantity;
         } else {
-            // Add new item to the cart with its price
             cart.items.push({ item: itemId, quantity, price: itemPrice });
         }
 
@@ -35,6 +38,7 @@ router.post('/:userId', async (req, res) => {
     }
 });
 
+// GET request to retrieve user's cart
 router.get('/:userId', async (req, res) => {
     const { userId } = req.params;
 
@@ -48,4 +52,4 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
-module.exports = router; 
+module.exports = router;

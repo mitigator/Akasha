@@ -3,69 +3,73 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/api/auth/login', formData);
-      if (response.data.token) {
-        navigate('/home'); // Redirect to the home page on successful login
-      }
-    } catch (err) {
-      setError('Login failed. Please check your credentials.');
-    }
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+            setMessage(response.data.message);
+            setError('');
+            navigate('/');
+        } catch (err) {
+            setError(err.response.data.message);
+            setMessage('');
+        }
+    };
 
-  return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-8 shadow-lg max-w-md w-full">
-      <h2 className="text-3xl font-semibold text-center text-white mb-6">Login</h2>
-      {error && <p className="text-red-500 text-center">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-white">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500"
-            required
-          />
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
+            <div className="bg-white bg-opacity-10 backdrop-blur-md shadow-lg rounded-lg p-8 border border-white border-opacity-20 w-full max-w-md">
+                <h2 className="text-3xl mb-6 text-center text-white">Login</h2>
+                {error && <p className="text-red-500">{error}</p>}
+                {message && <p className="text-green-500">{message}</p>}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        className="block w-full p-2 border border-white border-opacity-50 rounded-md bg-transparent text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        className="block w-full p-2 border border-white border-opacity-50 rounded-md bg-transparent text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        href="/register"
+                    >
+                        Login
+                    </button>
+                </form>
+                <div className="mt-4 text-center">
+                    <p className="text-white">
+                        Do not have an account?{' '}
+                        <button
+                            onClick={() => navigate('/register')}
+                            className="text-blue-400 hover:underline"
+                        >
+                            Register
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div>
-          <label className="block text-white">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
-        >
-          Login
-        </button>
-      </form>
-      <p className="text-center text-white mt-4">
-        Don’t have an account?{' '}
-        <a href="/register" className="text-purple-500 hover:underline">Register</a>
-      </p>
-    </div>
-  );
+    );
 };
 
 export default Login;

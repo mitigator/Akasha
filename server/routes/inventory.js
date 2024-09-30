@@ -8,6 +8,10 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { name, category, price, stock, description, imageUrl } = req.body;
 
+    if (!name || !category || !price || !stock || !description || !imageUrl) {
+        return res.status(400).json({ message: 'Please provide all required fields' });
+    }
+
     try {
         const newItem = new InventoryItem({
             _id: new mongoose.Types.ObjectId(),
@@ -50,6 +54,10 @@ router.get('/:id', async (req, res) => {
 // Update an inventory item by ID
 router.put('/:id', async (req, res) => {
     const { name, category, price, stock, description, imageUrl } = req.body;
+
+    if (!name || !category || !price || !stock || !description || !imageUrl) {
+        return res.status(400).json({ message: 'Please provide all required fields' });
+    }
 
     try {
         const updatedItem = await InventoryItem.findByIdAndUpdate(

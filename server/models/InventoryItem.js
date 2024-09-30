@@ -7,7 +7,7 @@ const inventoryItemSchema = new mongoose.Schema({
     stock: { type: Number, required: true },
     description: { type: String, required: true },
     imageUrl: { type: String, required: true }
-});
+}, { timestamps: true }); // Optional: for tracking item creation/updates
 
 const InventoryItem = mongoose.model('InventoryItem', inventoryItemSchema);
 

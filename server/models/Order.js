@@ -8,14 +8,18 @@ const orderItemSchema = new mongoose.Schema({
     },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true }
-});
+}, { timestamps: true }); // Optional: for tracking item in order
 
 const orderSchema = new mongoose.Schema({
-    userId: { type: String, required: true },
+    userId: { 
+        type: mongoose.Types.ObjectId, // Updated to ObjectId
+        ref: 'User', // Optional: You can reference the User model
+        required: true 
+    },
     items: [orderItemSchema],
     totalAmount: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true }); // Optional: for tracking order creation
 
 const Order = mongoose.model('Order', orderSchema);
 

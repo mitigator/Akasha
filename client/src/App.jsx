@@ -2,16 +2,21 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
+import Inventory from './components/Inventory';
+import { Home } from './pages/Home';
+import Cart from './components/Cart';
+
 
 function App() {
   return (
     <Router>
-      <div className="flex items-center justify-center h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
-      </div>
     </Router>
   );
 }
