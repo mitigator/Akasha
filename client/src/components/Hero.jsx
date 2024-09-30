@@ -12,17 +12,20 @@ const Hero = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % images.length);
-      setCurrentImage(images[index]);
+      setIndex((prevIndex) => {
+        const newIndex = (prevIndex + 1) % images.length;
+        setCurrentImage(images[newIndex]); // Update currentImage based on new index
+        return newIndex; // Return the new index for the next iteration
+      });
     }, 10000);
 
     return () => clearInterval(interval); 
-  }, [index]);
+  }, []);
 
   return (
     <div className="mx-auto flex flex-col lg:flex-row py-24 items-center justify-center overflow-x-hidden bg-[#C9A998] h-screen">
       <img 
-        className="lg:w-2/6 md:w-3/6 w-5/6 h-auto mb-10 object-cover object-center"
+        className="lg:w-2/6 md:w-3/6 w-5/6 h-auto mb-10 object-cover object-center rounded-2xl"
         alt="hero" 
         src={currentImage} 
       />
@@ -34,9 +37,9 @@ const Hero = () => {
           Enjoy the best quality produce, meats, and breads at unbeatable prices!
         </p>
         <div className="flex flex-col md:flex-row justify-center mx-auto">
-          <button className="hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 mb-4 md:mb-0 md:mr-4">
+          <a href='/inventory' className="hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 mb-4 md:mb-0 md:mr-4">
             Shop Now
-          </button>
+          </a>
           <button className="hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8">
             Special Offers
           </button>
